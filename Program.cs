@@ -5,6 +5,23 @@ class Program
 {
     static void Main()
     {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("FLAPPY BIRD");
+            Console.WriteLine("Press SPACE to start");
+            Console.WriteLine("Press Q to quit");
+
+            var startKey = Console.ReadKey(true);
+
+            if (startKey.Key == ConsoleKey.Q)
+                return;
+
+            RunGame();
+        }
+    }
+    static void RunGame()
+    {
         int birdY = 10;
         int pipeX = 30;
         int gapY = 8;
@@ -12,11 +29,12 @@ class Program
         int velocity = 0;
         int score = 0;
 
-        bool passedPipe = false; 
+        bool passedPipe = false;
 
         Random rand = new Random();
 
         Console.CursorVisible = false;
+
 
         while (true)
         {
@@ -29,8 +47,10 @@ class Program
                     velocity = -5;
                 }
             }
+            velocity += 1;
+            if (velocity > 3)
+                velocity = 3;
 
-            velocity++;
             birdY += velocity;
 
 
@@ -38,7 +58,7 @@ class Program
 
             if (pipeX < 0)
             {
-                pipeX = 30;
+                pipeX = 40;
                 gapY = rand.Next(5, 15);
                 passedPipe = false;
             }
@@ -46,13 +66,13 @@ class Program
             if (!passedPipe && pipeX < 5)
             {
                 score++;
-                passedPipe = true; 
+                passedPipe = true;
             }
             if (birdY < 0 || birdY > 20)
             {
                 break;
             }
-            if (pipeX >= 4 && pipeX <= 6)
+            if (pipeX <= 6 && pipeX + 2 >= 5)
             {
                 bool inGap = birdY >= gapY && birdY <= gapY + gapSize - 1;
 
@@ -64,31 +84,57 @@ class Program
             Console.Clear();
 
             Console.SetCursorPosition(5, birdY);
-            Console.Write("O");
+            Console.Write(velocity < 0 ? "^" : "v");
 
-            for (int x = 0; x < gapY; x++)
+            for (int y = 0; y < gapY; y++)
             {
-                Console.SetCursorPosition(pipeX, x);
-                Console.Write("|");
+                for (int w = 0; w < 3; w++)
+                {
+                    Console.SetCursorPosition(pipeX + w, y);
+                    Console.Write("|");
+                }
+
             }
 
 
-            for (int x = gapY + gapSize; x < 25; x++)
+            for (int y = gapY + gapSize; y < 22; y++)
             {
-                Console.SetCursorPosition(pipeX, x);
-                Console.Write("|");
+                for (int w = 0; w < 3; w++)
+                {
+                    Console.SetCursorPosition(pipeX + w, y);
+                    Console.Write("|");
+                }
 
             }
+            for (int i = 0; i < 50; i++)
+            {
+                Console.SetCursorPosition(i, 22);
+                Console.Write("-");
+            }
+
             Console.SetCursorPosition(0, 0);
             Console.Write("Score: " + score);
 
-            Thread.Sleep(100);
+            Thread.Sleep(Math.Max(40, 100 - score * 2));
         }
 
         Console.Clear();
         Console.WriteLine("Game Over!");
         Console.WriteLine("Score: " + score);
+        Console.WriteLine("Press R to restart");
+        Console.WriteLine("Press Q to quit");
+
+        while (true)
+        {
+            var key = Console.ReadKey(true);
+
+            if (key.Key == ConsoleKey.R)
+                return;
+
+            if (key.Key == ConsoleKey.Q)
+                Environment.Exit(0);
+        }
     }
-}    
+}  
 
 
